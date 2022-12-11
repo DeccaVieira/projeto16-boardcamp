@@ -1,25 +1,18 @@
-import express, { application } from 'express';
-import cors from 'cors';
-import pkg from 'pg';
-import dotenv from 'dotenv';
-dotenv.config();
-
-const connection = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
-const {Pool} = pkg;
+import express from "express";
+import cors from "cors";
+import categoryRouter from "./routes/categories.routes.js";
+import customersRouter from "./routes/customers.routes.js";
+import gamesRouter from "./routes/games.routes.js";
+//import rentalsRouter from "./routes/rentals.routes.js";
 const app = express();
 app.use(express.json());
-const connect = new Pool ({
-  host:'localhost',
-  port: 5432,
-  user:'postgres',
-  password:'0909',
-  database: 'boardcamp'
-})
+app.use(cors());
 
-
+app.use(categoryRouter);
+app.use(customersRouter);
+app.use(gamesRouter);
+//app.use(rentalsRouter)
 
 app.listen(4000, () => {
-  console.log("Server running in port 4000")
-})
+  console.log("Server running in port 4000");
+});
