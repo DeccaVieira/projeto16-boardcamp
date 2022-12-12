@@ -4,14 +4,14 @@ import {
   createCustomers,
   findAllCustomers,
   findCustomerId,
-  updateCustomers
+  updateCustomers,
 } from "../controllers/customers.controllers.js";
 
 const customersRouter = Router();
 
-customersRouter.post("/customers", customersValidation,createCustomers);
+customersRouter.post("/customers", customersValidation, createCustomers);
 customersRouter.get("/customers", findAllCustomers);
-customersRouter.get("/customers/:id" ,findCustomerId);
-customersRouter.put("/customers/:id",customersValidation, updateCustomers);
+customersRouter.get("/customers/:id", findCustomerId);
+customersRouter.put("/customers/:id", customersValidation, updateCustomers);
 
 export default customersRouter;

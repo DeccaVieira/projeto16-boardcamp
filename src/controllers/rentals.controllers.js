@@ -11,31 +11,35 @@ export async function findAllRentals(req, res) {
   `);
     return res.send(rentals.rows);
   } catch (err) {
-    res.status(500).send(err.message);
+    return res.status(500).send(err.message);
   }
 }
 
-
 export async function findByCustomer(req, res) {
   const { customerId } = req.params;
-  if (customerId) {
+
+  try {
     const { rows } = await connectionDB.query(
-      `SELECT * FROM rentals JOIN customers ON  customers.id = rentals."customerId" 
-        WHERE id=$1;`,
-      [id]
+      `SELECT * FROM rentals  
+        WHERE "customerId"=$1;`,
+      [customerId]
     );
-    return res.send(rows[0]);
+    if (rows.length !== 0) {
+      return res.send(rows);
+    }
+  } catch (err) {
+    return res.status(500).send(err.message);
   }
 }
 
 export async function findByGame(req, res) {
   const { gameId } = req.params;
 
-  if (customerId) {
+  if (gameId) {
     const { rows } = await connectionDB.query(
       `SELECT * FROM rentals JOIN games ON games.id = rentals."customerId" 
-        WHERE id=$1;`,
-      [id]
+        WHERE gameId=$1;`,
+      [gameId]
     );
     return res.send(rows[0]);
   }
@@ -43,26 +47,26 @@ export async function findByGame(req, res) {
 
 export async function createRentals(req, res) {
   const { customerId, gameId, daysRented } = req.body;
+  console.log(gameId, "g");
   try {
-    
     const checkCustomerId = await connectionDB.query(
-      ` SELECT * FROM rentals WHERE "customerId" = $1`,
+      ` SELECT * FROM customers WHERE id = $1`,
       [customerId]
     );
     if (checkCustomerId.rows.length === 0) {
-      return res.sendStatus(400);
+      console.log("1");
+      return res.status(400).send("checkCustomerId");
     }
 
     const checkGameId = await connectionDB.query(
-      ` SELECT * FROM rentals WHERE "gameId" = $1`,
+      ` SELECT * FROM games WHERE id = $1`,
       [gameId]
     );
 
     if (checkGameId.rows.length === 0) {
-      return res.sendStatus(400);
+      console.log(gameId);
+      return res.status(400).send("checkGameId");
     }
-
-    
 
     const returnDate = null;
     const rentDate = dayjs().format("YYYY-MM-DD");
@@ -97,7 +101,7 @@ export async function createRentals(req, res) {
       `UPDATE games SET "stockTotal" = "stockTotal"-1 WHERE id=$1`,
       [gameId]
     );
-    return res.status(201);
+    return res.sendStatus(201);
   } catch (err) {
     res.status(500).send(err.message);
   }
@@ -105,37 +109,47 @@ export async function createRentals(req, res) {
 
 export async function removeRental(req, res) {
   const { id } = req.params;
-console.log(id);
+
   try {
-   await connectionDB.query(`DELETE from rentals WHERE id=$1`, [id]);
-   return res.sendStatus(200);
+    await connectionDB.query(`DELETE from rentals WHERE id=$1`, [id]);
+    return res.sendStatus(200);
   } catch (error) {
-    return res.status(500).send(err.message);
+    return res.status(500).send(error.message);
   }
 }
 
 export async function endRental(req, res) {
   const { id } = req.params;
-  try{
-   const rentalsId = await connectionDB.query(`SELECT * from rentals WHERE id=$1`, [id]);
-const rentDate = rentalsId.rows[0].rentDate
-const returnDate = dayjs();
-const days = returnDate.diff(rentDate, 'day');
+  try {
+    const rentalsId = await connectionDB.query(
+      `SELECT * from rentals WHERE id=$1`,
+      [id]
+    );
+    const rentDate = rentalsId.rows[0].rentDate;
+    const returnDate = dayjs();
+    const days = returnDate.diff(rentDate, "day");
 
-if (rentalsId.rows[0].daysRented > days){
-  await connectionDB.query(`UPDATE rentals
+    if (rentalsId.rows[0].daysRented > days) {
+      await connectionDB.query(
+        `UPDATE rentals
     SET "returnDate"=$1,"delayFee"=$2
-    Where id=$3 `, [returnDate.toISOString(),0,id]
-    )
-}else{
-  const delayFee = ((days - rentalsId.rows[0].daysRented )* (rental.rows[0].originalPrice / rental.rows[0].daysRented));
-  await connectionDB.query(`UPDATE rentals
+    Where id=$3 `,
+        [returnDate.toISOString(), 0, id]
+      );
+    } else {
+      const delayFee =
+        (days - rentalsId.rows[0].daysRented) *
+        (rental.rows[0].originalPrice / rental.rows[0].daysRented);
+      await connectionDB.query(
+        `UPDATE rentals
   SET "returnDate"=$1,"delayFee"=$2
-  Where id=$3 `, [returnDate.toISOString(),delayFee,id])
-}
-console.log(days);
-   res.sendStatus(201)
-  }catch (error) {
+  Where id=$3 `,
+        [returnDate.toISOString(), delayFee, id]
+      );
+    }
+    console.log(days);
+    return res.sendStatus(201);
+  } catch (error) {
     return res.status(500).send(error.message);
   }
 }
