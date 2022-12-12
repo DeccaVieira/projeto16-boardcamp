@@ -11,7 +11,7 @@ app.use(cors());
 app.use(categoryRouter);
 app.use(customersRouter);
 app.use(gamesRouter);
-app.use(rentalsRouter)
+app.use(rentalsRouter);
 
 app.listen(4000, () => {
   console.log("Server running in port 4000");

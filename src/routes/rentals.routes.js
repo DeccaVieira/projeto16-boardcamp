@@ -15,6 +15,6 @@ rentalsRouter.get("/rentals", findAllRentals);
 rentalsRouter.get("/rentals/:customerid", findByCustomer);
 rentalsRouter.get("/rentals/:gameId", findByGame);
 rentalsRouter.post("/rentals/:id/return");
-rentalsRouter.delete("/rentals/:id",removeRental)
+rentalsRouter.delete("/rentals/:id",removeRental);
 
 export default rentalsRouter;

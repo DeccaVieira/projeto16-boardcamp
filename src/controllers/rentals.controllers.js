@@ -4,7 +4,7 @@ import dayjs from "dayjs";
 export async function findAllRentals(req, res) {
   try {
     const rentals = await connectionDB.query(`
-  SELECT rentals.*, games.id, games.name, games."categoryId", categories.name,customers.id, customers.name FROM rentals
+  SELECT rentals.*, games.id as "gamesId", games.name as "gamesName", games."categoryId", categories.name as "categoriesName",customers.id as "customersId", customers.name as "customersName" FROM rentals
   JOIN customers ON  customers.id = rentals."customerId" 
   JOIN games ON rentals."gameId" = games.id
   JOIN categories ON  categories.id = games."categoryId"    
@@ -14,6 +14,8 @@ export async function findAllRentals(req, res) {
     res.status(500).send(err.message);
   }
 }
+
+
 export async function findByCustomer(req, res) {
   const { customerId } = req.params;
   if (customerId) {
@@ -60,6 +62,8 @@ export async function createRentals(req, res) {
       return res.sendStatus(400);
     }
 
+    
+
     const returnDate = null;
     const rentDate = dayjs().format("YYYY-MM-DD");
     const delayFee = null;
@@ -101,17 +105,11 @@ export async function createRentals(req, res) {
 
 export async function removeRental(req, res) {
   const { id } = req.params;
+console.log(id);
   try {
-    const checkId = await connectionDB.query(
-      ` SELECT * FROM rentals WHERE name = $1`,
-      [id]
-    );
-    if (checkId.rows.length === 0) {
-      return res.sendStatus(404);
-    }
-    await connectionDB.query("DELETE FROM rentals WHERE id=$1", [id]);
-    res.sendStatus(200);
-  } catch (err) {
-    res.status(500).send(err.message);
+   await connectionDB.query(`DELETE from rentals WHERE id=$1`, [id]);
+   return res.sendStatus(200);
+  } catch (error) {
+    return res.status(500).send(err.message);
   }
 }
