@@ -4,7 +4,8 @@ import {
   findAllRentals,
   removeRental,
   findByCustomer, 
-  findByGame
+  findByGame,
+  endRental
   //updateRentals,
 } from "../controllers/rentals.controllers.js";
 
@@ -14,7 +15,7 @@ rentalsRouter.post("/rentals", createRentals);
 rentalsRouter.get("/rentals", findAllRentals);
 rentalsRouter.get("/rentals/:customerid", findByCustomer);
 rentalsRouter.get("/rentals/:gameId", findByGame);
-rentalsRouter.post("/rentals/:id/return");
+rentalsRouter.post("/rentals/:id/return",endRental);
 rentalsRouter.delete("/rentals/:id",removeRental);
 
 export default rentalsRouter;

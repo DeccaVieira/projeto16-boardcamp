@@ -113,3 +113,29 @@ console.log(id);
     return res.status(500).send(err.message);
   }
 }
+
+export async function endRental(req, res) {
+  const { id } = req.params;
+  try{
+   const rentalsId = await connectionDB.query(`SELECT * from rentals WHERE id=$1`, [id]);
+const rentDate = rentalsId.rows[0].rentDate
+const returnDate = dayjs();
+const days = returnDate.diff(rentDate, 'day');
+
+if (rentalsId.rows[0].daysRented > days){
+  await connectionDB.query(`UPDATE rentals
+    SET "returnDate"=$1,"delayFee"=$2
+    Where id=$3 `, [returnDate.toISOString(),0,id]
+    )
+}else{
+  const delayFee = ((days - rentalsId.rows[0].daysRented )* (rental.rows[0].originalPrice / rental.rows[0].daysRented));
+  await connectionDB.query(`UPDATE rentals
+  SET "returnDate"=$1,"delayFee"=$2
+  Where id=$3 `, [returnDate.toISOString(),delayFee,id])
+}
+console.log(days);
+   res.sendStatus(201)
+  }catch (error) {
+    return res.status(500).send(error.message);
+  }
+}
