@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { customersValidation } from "../../middlewares/customersValidation.js";
 import {
   createCustomers,
   findAllCustomers,
@@ -8,9 +9,9 @@ import {
 
 const customersRouter = Router();
 
-customersRouter.post("/customers", createCustomers);
+customersRouter.post("/customers", customersValidation,createCustomers);
 customersRouter.get("/customers", findAllCustomers);
-customersRouter.get("/customers/:id", findCustomerId);
-customersRouter.patch("/customers", updateCustomers);
+customersRouter.get("/customers/:id" ,findCustomerId);
+customersRouter.put("/customers/:id",customersValidation, updateCustomers);
 
 export default customersRouter;

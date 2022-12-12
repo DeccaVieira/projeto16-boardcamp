@@ -1,14 +1,14 @@
-// import { Router } from "express";
-// import {
-//   createRentals,
-//   findAllRentals,
-//   updateRentals,
-// } from "../controllers/rentals.controllers.js";
+import { Router } from "express";
+import {
+  createRentals,
+  findAllRentals,
+  //updateRentals,
+} from "../controllers/rentals.controllers.js";
 
-// const rentalsRouter = Router();
+const rentalsRouter = Router();
 
-// rentalsRouter.post("/rentals", createRentals);
-// rentalsRouter.get("/rentals", findAllRentals);
-// rentalsRouter.post("/rentals/:id/return", updateRentals);
+rentalsRouter.post("/rentals", createRentals);
+rentalsRouter.get("/rentals", findAllRentals);
+rentalsRouter.post("/rentals/:id/return");
 
-//export default rentalsRouter;
+export default rentalsRouter;
