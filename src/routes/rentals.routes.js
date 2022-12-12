@@ -3,7 +3,8 @@ import {
   createRentals,
   findAllRentals,
   removeRental,
-  findByCustomer
+  findByCustomer, 
+  findByGame
   //updateRentals,
 } from "../controllers/rentals.controllers.js";
 
