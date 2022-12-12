@@ -10,9 +10,23 @@ export async function createCustomers(req, res) {
   return res.sendStatus(201);
 }
 export async function findAllCustomers(req, res) {
+  const {cpf} = req.query;
+  try {
+  if(cpf){
+    const customer = await connectionDB.query(`
+    SELECT * FROM customers 
+    WHERE cpf ILIKE $1`, [`${cpf}%`]);
+    console.log(cpf);
+   return res.send(customer.rows)
+  }
+
   const customers = await connectionDB.query(`SELECT * FROM customers`);
   res.send(customers.rows);
+}catch (err) {
+  res.sendStatus(500).send(err.message);
+} 
 }
+
 export async function findCustomerId(req, res) {
   const { id } = req.params;
 
