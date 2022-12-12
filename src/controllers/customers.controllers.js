@@ -2,8 +2,11 @@ import { connectionDB } from "../database/db.js";
 
 export async function createCustomers(req, res) {
   const { name, phone, cpf, birthday } = req.body;
-
-  const result = await connectionDB.query(
+  const checkCpf = await connectionDB.query(` SELECT * FROM customers WHERE cpf = $1`,[cpf])
+  if(checkCpf.rows.length!==0){
+    return res.sendStatus(409);
+  }
+  await connectionDB.query(
     `INSERT INTO customers(name, phone, cpf, birthday) VALUES ($1, $2,$3,$4)`,
     [name, phone, cpf, birthday]
   );

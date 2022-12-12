@@ -14,6 +14,37 @@ export async function findAllRentals(req, res) {
 res.status(500).send(err.message)
 }
 }
+export async function findByCustomer(req,res){
+  const {customerId } = req.params;
+    if(customerId){
+
+      const { rows } = await connectionDB.query(
+        `SELECT * FROM rentals JOIN customers ON  customers.id = rentals."customerId" 
+        WHERE id=$1;`,
+        [id]
+        ); 
+        return res.send(rows[0]);  
+      }
+   
+    }
+
+
+export async function findByGame(req,res){
+  const {gameId } = req.params;
+
+
+    if(customerId){
+
+      const { rows } = await connectionDB.query(
+        `SELECT * FROM rentals JOIN games ON games.id = rentals."customerId" 
+        WHERE id=$1;`,
+        [id]
+        ); 
+        return res.send(rows[0]);  
+      }
+   
+    }
+
 
 export async function createRentals(req, res) {
   const {customerId, gameId, daysRented} = req.body;
@@ -30,5 +61,19 @@ try{
   return res.status(201);
 }catch (err){
   res.status(500).send(err.message)
+  }
+}
+
+export async function removeRental(req, res) {
+  const { id } = req.params;
+  try {
+  const checkId = await connectionDB.query(` SELECT * FROM rentals WHERE name = $1`,[id])
+  if(checkId.rows.length===0){
+    return res.sendStatus(404);
+  }
+    await connectionDB.query("DELETE FROM rentals WHERE id=$1", [id]);
+    res.sendStatus(200);
+  } catch (err) {
+    res.status(500).send(err.message);
   }
 }
