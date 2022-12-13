@@ -25,7 +25,7 @@ export async function findAllCustomers(req, res) {
     WHERE cpf ILIKE $1`,
         [`${cpf}%`]
       );
-      console.log(cpf);
+   
       return res.send(customer.rows);
     }
 

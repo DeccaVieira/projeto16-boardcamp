@@ -30,7 +30,7 @@ export async function createGames(req, res) {
       [name]
     );
     if (checkName.rows.length !== 0) {
-      console.log(checkName.rows);
+     
       return res.sendStatus(409);
     }
     await connectionDB.query(

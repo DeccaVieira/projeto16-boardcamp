@@ -1,15 +1,16 @@
 import { connectionDB } from "../database/db.js";
 import dayjs from "dayjs";
 
+
 export async function findAllRentals(req, res) {
   try {
-    const rentals = await connectionDB.query(`
+    const rentalsTable = await connectionDB.query(`
   SELECT rentals.*, games.id as "gamesId", games.name as "gamesName", games."categoryId", categories.name as "categoriesName",customers.id as "customersId", customers.name as "customersName" FROM rentals
   JOIN customers ON  customers.id = rentals."customerId" 
   JOIN games ON rentals."gameId" = games.id
   JOIN categories ON  categories.id = games."categoryId"    
   `);
-    return res.send(rentals.rows);
+    return res.send(rentalsTable.rows);
   } catch (err) {
     return res.status(500).send(err.message);
   }
@@ -47,14 +48,14 @@ export async function findByGame(req, res) {
 
 export async function createRentals(req, res) {
   const { customerId, gameId, daysRented } = req.body;
- 
+
   try {
     const checkCustomerId = await connectionDB.query(
       ` SELECT * FROM customers WHERE id = $1`,
       [customerId]
     );
     if (checkCustomerId.rows.length === 0) {
-      console.log("1");
+     
       return res.status(400).send("checkCustomerId");
     }
 
@@ -64,7 +65,7 @@ export async function createRentals(req, res) {
     );
 
     if (checkGameId.rows.length === 0) {
-      console.log(gameId);
+    
       return res.status(400).send("checkGameId");
     }
 
@@ -147,7 +148,7 @@ export async function endRental(req, res) {
         [returnDate.toISOString(), delayFee, id]
       );
     }
-    console.log(days);
+    
     return res.sendStatus(201);
   } catch (error) {
     return res.status(500).send(error.message);
