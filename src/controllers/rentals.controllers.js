@@ -47,7 +47,7 @@ export async function findByGame(req, res) {
 
 export async function createRentals(req, res) {
   const { customerId, gameId, daysRented } = req.body;
-  console.log(gameId, "g");
+ 
   try {
     const checkCustomerId = await connectionDB.query(
       ` SELECT * FROM customers WHERE id = $1`,

@@ -15,7 +15,7 @@ export async function findAllGames(req, res) {
       return res.send(game.rows);
     }
     const games = await connectionDB.query(`
-  SELECT games.*, categories.name as "nameCategory" FROM games JOIN categories ON games."categoryId" = categories.id`);
+  SELECT games.*, categories.name as "categoryName" FROM games JOIN categories ON games."categoryId" = categories.id`);
     return res.send(games.rows);
   } catch (err) {
     return res.status(500).send(err.message);
